@@ -12,7 +12,7 @@ from Misc import LogLevel, log, StructDeclaration
 class PDFProcessor:
 
     def __init__(self):
-        self.pdfPages = list()      # to contain tuple of textual content and binary content.  tuple[str, io]
+        self.pdfPages = dict()      # contains tuple of textual struct and binary content, tuple[StructDeclaration, io]
         self.currentPDF = None
         self.uuid = uuid.uuid4().hex
 
@@ -45,7 +45,8 @@ class PDFProcessor:
         for pg in self.currentPDF.pages:    # iterate through pages and get content
             v = self.getPDFPageContent(pg)
             if v != "":
-                self.pdfPages.append((self._generateDeclarationStruct(v), pg))
+                w = self._generateDeclarationStruct(v)
+                self.pdfPages[w.awb] = (w, pg)
 
     def getPDFPageContent(self, pageObj: PyPDF2.PageObject) -> str:
         """
@@ -91,8 +92,8 @@ class PDFProcessor:
         Reads all pages saved in memory and creates a new PDF with the correct naming convention for each page.
         :return: None
         """
-        for pg in self.pdfPages:
-            self._transposePage(pg)     # where page is a tuple[StructDeclaration, PyPDF2.PageObject]
+        for key in self.pdfPages.keys():
+            self._transposePage(self.pdfPages[key])     # where page is a tuple[StructDeclaration, PyPDF2.PageObject]
 
     def _generateDeclarationStruct(self, content: str) -> StructDeclaration:
         """
@@ -107,9 +108,11 @@ class PDFProcessor:
         struct.mawb = content[content.find("MAWB ") + 5:content.find("CHRONOPOST  MAURITIUS  LTD")].strip()
         struct.awb = content[content.find("HAWB ") + 5:content.find(" Goods Landed At DPDL")].strip()
         struct.reportNo = content[content.find("Report No ") + 10:content.find("Report No ") + 18].strip()
-        struct.custCurr = ""
-        struct.custAmt = 0.0
-        struct.weight = 0.0
+        pos = content.find("Declared Value ") + 15
+        struct.custCurr = content[pos:pos + 3]
+        struct.custAmt = eval(content[pos+3:content.find('\n', pos+3)].strip())
+        pos = content.find("\nFreight Cost")
+        struct.weight = eval(content[content.find(' ', pos - 8):pos].strip())   # stripping the charg weight.
         pos = content.rfind("Consignee") + 9
         struct.cnee = content[pos:content.find('\n', pos)].strip()
         pos = content.find('\n', pos) + 1
@@ -123,9 +126,9 @@ class PDFProcessor:
         struct.TAN = ""
         struct.BRN = ""
         struct.customerType = "INDIVIDUAL" if struct.BRN == "" else "COMPANY"
-        struct.frtAmt = 0.0
-        struct.frtCurr = ""
+        struct.frtAmt = 35.00
+        struct.frtCurr = "USD"
         struct.othAmt = 0.0
-        struct.othCurr = ""
+        struct.othCurr = "USD"
 
         return struct

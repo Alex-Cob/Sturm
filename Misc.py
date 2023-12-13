@@ -36,10 +36,10 @@ class StructDeclaration:
         self.TAN = ""
         self.BRN = ""
         self.customerType = ""      # company or individual
-        self.frtAmt = 0.0
-        self.frtCurr = ""
-        self.othAmt = 0.0
-        self.othCurr = ""
+        self.frtAmt = 35.00
+        self.frtCurr = "USD"
+        self.othAmt = 0.00
+        self.othCurr = "USD"
         # Specific invoice details such as description, item value, item qty and HS code to be added on spot.
 
 

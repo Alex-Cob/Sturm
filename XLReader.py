@@ -1,7 +1,8 @@
 
 import os
-import openpyxl as xl
 from tkinter.filedialog import askdirectory, askopenfilename
+import zipfile
+import openpyxl as xl
 
 from Misc import log, LogLevel
 
@@ -31,7 +32,8 @@ class InvoiceReader:
         Populates the self.foldername by opening a tkinter folderdialog box to select target
         :return: None
         """
-        self.foldername = askdirectory(title="Select invoice folder:")  # select folder where operation starts.
+        # select folder where operation starts.
+        self.foldername = askopenfilename(title="Select invoice zip folder:", defaultextension=".zip")
 
     def _retrieveInvoiceData(self) -> None:
         """
@@ -53,20 +55,27 @@ class InvoiceReader:
         self.count_data = 0
         self.count_desc = 0
 
+        with zipfile.ZipFile(self.foldername, 'r') as zip_ref:
+            zip_ref.extractall(self.foldername[:-4])
+
         # Goes through each file in the folder (assuming that all are Chronopost Invoices of same format)
         # Then, reads all the descriptions and save them in the global self.data being a dictionary with
         # waybill as the key.
-        for path, dirs, files in os.walk(self.foldername):
+        for path, dirs, files in os.walk(self.foldername[:-4]):
             for file in files:
                 wb = xl.load_workbook(os.path.join(path, file))
                 sh = wb[InvoiceReader.DEFAULT_CHRONO_SHEETNAME]     # Opening the default sheetname used by Chronopost
 
-                self.data[str(sh.cell(row=7, column=2).value)] = list()     # create new list from key 'waybill ref'
+                # Below will create a new key from waybill and add a tuple of list[name, telNo] &
+                # and an empty list which will hold the items details.
+                self.data[str(sh.cell(row=7, column=2).value)] = [str(sh.cell(row=5, column=4).value),
+                                                                  str(sh.cell(row=6, column=4).value)], list()
+
                 x = 10      # first row where we get the shipment description.
 
                 # Will iterate from the first description line (row 10) till it finds an empty column.
                 while sh.cell(row=x, column=2).value not in (None, ""):
-                    self.data[str(sh.cell(row=7, column=2).value)].append(
+                    self.data[str(sh.cell(row=7, column=2).value)][1].append(
                         (
                             str(sh.cell(row=x, column=2).value),            # Description
                             eval(str(sh.cell(row=x, column=3).value)),      # Units
@@ -114,12 +123,17 @@ class InvoiceReader:
 
     def categorizeDescriptions(self) -> list:
         """
-        It will take the existing self.descSet and will try to return a list that has been sorted into category
+        It will take the existing self.data and will try to return a list that has been sorted into category
         to ease the identification process.
         :return:
         """
-        if len(self.descSet) == 0:      # means the description set is still empty.
-            return list(self.descSet)   # ensuring to return a list even if empty.
+        if len(self.data.keys()) == 0:      # means the data dict is still empty.
+            return list(self.data)   # ensuring to return a list even if empty.
+
+        descSet = set()
+        for key in self.data.keys():
+            for elem in self.data[key][1]:      # means it is iterating each item from each waybills entered in dict.
+                descSet.add(elem[0])
 
         # Our category bins to work with.
         hat = list()
@@ -129,8 +143,8 @@ class InvoiceReader:
         garment = list()
         other = list()
 
-        # Below will iterate values from the set of description (self.descSet
-        for elem in self.descSet:
+        # Below will iterate values from the set of description (descSet)
+        for elem in descSet:
             stripelem = elem.lower().replace(' ', '')       # stripping values only once for performance.
 
             # below attempts to categorize from the existing words in the description.
@@ -215,12 +229,6 @@ class InvoiceReader:
                     currPat = pattern
             x += 1
         return None
-
-
-class ManifestReader:
-
-    def __init__(self):
-        pass
 
 
 if __name__ == '__main__':
