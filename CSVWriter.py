@@ -1,13 +1,13 @@
 import datetime as dt
+import os.path
 
 
 class CSVWriter:
 
-    def __init__(self, usr: str):
-        self.user = usr
+    def __init__(self, path: str):
         self.header = "Courier Reference,AWB,REPORT,IMPORTER2NAME,IMPORTERNAME2,ImporterAddress1,ImporterAddress2,ImporterAddress3,IMPORTERADDRESSCOUNTRY,NATIONALITY,NIC,PASSPORT,EMAILADDRESS,MOBILE,TAN,BRN,IMPORTERTYPE,MOBILE,DOB,COUNTRYOFCONSIGNMENT,DECLAREDFREIGHTFCYAMOUNT,DECLAREDFREIGHTFCYCODE,OTHERCHARGESFCYAMOUNT,OTHERCHARGESFCYCODE,INSURANCEFCYAMOUNT,INSURANCEFCYCODE,HSCODE,GOODSDESCRIPTION,QTY,ORIGIN,SUP1,SUP2,RESERVEVALUE,DECLAREDVALUEFCYAMT,FCYCODE,PURPOSEOFIMPORTATION,USEITEMFLAG,MARKETABLEFLAG,PROXYNAME,PROXYNIC,PROXYADD1,PROXYADD2,PROXYADD3,PROXYADDRESSCOUNTRY\n"
         self.file_log = list()
-        self.fileGenerated = ""
+        self.fileGenerated = os.path.join(path, "worked.csv")
 
     def enterRecord(self, manDetes: tuple | list, custDetes: tuple | list, repDetes: tuple | list,
                     itmDetes: tuple | list):
@@ -79,16 +79,6 @@ class CSVWriter:
 
             file.write(s)
 
-    def searchWBinF(self, wbDetails: str, lns: list | tuple) -> tuple:
-        for ln in lns:
-            if str(wbDetails).strip() == ln.split(',')[1]:
-                return tuple(ln.split(',')[:-1])
-
-    def searchReportinF(self, mawb: str, lns: tuple | list) -> tuple:
-        for ln in lns:
-            if str(mawb).strip() == ln[0]:
-                return ln
-
     def convertStr2List(self, ln: str) -> list:
         """
         Converts a list lookalike (generally as a string in a file from a python ops return) into an actual list.
@@ -139,3 +129,7 @@ class CSVWriter:
             return retList.copy()
         else:
             raise SyntaxError("Syntax somehow incorrect...")  # meaning there was not enough closing brackets
+
+
+if __name__ == '__main__':
+    pass

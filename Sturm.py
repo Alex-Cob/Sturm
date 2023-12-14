@@ -13,7 +13,4 @@ import XLReader
 import PDFProcessor
 
 if __name__ == '__main__':
-    pdf = PDFProcessor.PDFProcessor()
-    pdf.getPdfFile()
-    #pdf.transposeAllPages()
-    #xl = XLReader.InvoiceReader()
+    pass

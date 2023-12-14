@@ -132,3 +132,7 @@ class PDFProcessor:
         struct.othCurr = "USD"
 
         return struct
+
+
+if __name__ == '__main__':
+    pass
