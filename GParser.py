@@ -1,28 +1,39 @@
-import os
 import re
 import gspread
 
-
-FOLDERCREDS = os.path.abspath("aoth")
-FILESERVACC = os.path.join(FOLDERCREDS, "service_account.json")
+from Misc import *
 
 
-class GSheetParse:
-    FOLDERCREDS = ""
+class IndexIDRecord:
+    name = 0
+    email = 1
+    telephone = 2
+    NIC = 3
+    passport = 4
+    DOB = 5
+    proxyName = 6
+    proxyID = 7
 
-    def __init__(self):
-        self.file_creds = os.path.join(FOLDERCREDS, "service_account.json")
-        self.service = gspread.service_account(self.file_creds)
+
+class IDParser:
+    CELLRANGE = "A2:H"
+
+    def __init__(self, service: gspread.auth.Client = None):
+        self.file_creds = FILESERVACC
+        self.szCustDataFields = 8    # amount of columns per record where data is stored.
+        if service is None:
+            self.service = gspread.service_account(self.file_creds)
+        else:
+            self.service = service
         self.customerData = self.downloadClientData()
-        self.szCustDataFields = 6    # amount of columns per record where data is stored.
 
     def downloadClientData(self) -> list:
         """
-        Retrieves the whole data from the google sheet
+        Retrieves the whole data from the Google sheet
         :return: list of personal details.
         """
-        sh = self.service.open("ClientRecord").worksheet("Record")
-        rng = sh.range("A2:F")
+        sh = self.service.open(SPREADSHEET_CUSTOMERS).worksheet(SHEET_CUSTOMER)
+        rng = sh.range(IDParser.CELLRANGE)
         x = self._orderCustomersPulled(rng)
         return x.copy()
 
@@ -62,8 +73,12 @@ class GSheetParse:
             x += 1  # so that it searches the next
         return retVals.copy()
 
-    def guessCustomer(self, name_: str):
-        # tries to guest customer from name.
+    def guessCustomer(self, name_: str) -> list[list]:
+        """
+        Will take a full name and try to determine the customer that was expected.
+        :param name_: Fullname being sought.
+        :return: list of all the candidates worth.
+        """
         sublstOfSets = list()
         nm = name_.replace(')', '').replace('(', '').replace('\\', '')  # because of Shein names containing these chars
 
@@ -77,6 +92,7 @@ class GSheetParse:
         mainLst = list()
         tempLst = list()
 
+        # it works, don't touch.
         while x + 1 < sz:
             if len(mainLst) == 0:
                 tempLst.clear()
@@ -94,6 +110,43 @@ class GSheetParse:
                 mainLst = tempLst.copy()
             x += 1
         return mainLst
+
+
+# noinspection PyMethodMayBeStatic
+class HSParser:
+
+    def __init__(self, service: gspread.auth.Client = None):
+        self.file_creds = FILESERVACC
+        if service is None:
+            self.service = gspread.service_account(self.file_creds)
+        else:
+            self.service = service
+        self.knownCommodities = self.retrieveKnownCommodities()      # list of tuples of commodity / HS code pairs.
+
+    def retrieveKnownCommodities(self) -> list[tuple]:
+        """
+        Will retrieve the record from the google sheet and place in memory for easy use.
+        :return: None
+        """
+        sh = self.service.open(SPREADSHEET_HSCODES).worksheet(SHEET_HSCODES)
+        rng = sh.range("A2:B")
+        x = self._sortPairs(rng)
+        return x.copy()
+
+    def _sortPairs(self, rng: list) -> list[tuple]:
+        items = []
+        pairs = []
+        x = 0
+        while x < len(rng):
+            # checks if the first column (name) is empty. Pattern ensures this line falls on name.
+            if rng[x].value in (None, ""):
+                break
+            for i in range(2):  # will iterate for each column in each entry/row.
+                pairs.append(rng[x].value)
+                x += 1  # iterating for the 'while' loop
+            items.append(tuple(pairs))
+            pairs.clear()
+        return items.copy()
 
 
 if __name__ == '__main__':

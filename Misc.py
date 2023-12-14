@@ -1,3 +1,14 @@
+import os
+
+__VERSION__ = "0.0.1"
+
+FOLDERCREDS = os.path.abspath(".")
+FILESERVACC = os.path.join(FOLDERCREDS, "chrono-sturm-creds.json")
+SPREADSHEET_CUSTOMERS = "ClientRecord"
+SHEET_CUSTOMER = "Record"
+SPREADSHEET_HSCODES = "HSMapping"
+SHEET_HSCODES = "Items"
+
 
 class LogLevel:
     """Defines the type of information being logged in func 'log'"""

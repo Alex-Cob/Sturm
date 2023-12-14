@@ -1,11 +1,10 @@
 
-import os
 import uuid
 
 import PyPDF2
 from tkinter.filedialog import askopenfilename
 
-from Misc import LogLevel, log, StructDeclaration
+from Misc import *
 
 
 # noinspection PyMethodMayBeStatic
@@ -15,6 +14,7 @@ class PDFProcessor:
         self.pdfPages = dict()      # contains tuple of textual struct and binary content, tuple[StructDeclaration, io]
         self.currentPDF = None
         self.uuid = uuid.uuid4().hex
+        self.getPdfFile()
 
     def __del__(self):
         pass
@@ -117,7 +117,6 @@ class PDFProcessor:
         struct.cnee = content[pos:content.find('\n', pos)].strip()
         pos = content.find('\n', pos) + 1
         struct.cneeAddr = content[pos:content.rfind('\n')].strip()
-        pos = content.find('\n', pos) + 1
         struct.cneeEmail = content[content.rfind('\n') + 1:].strip()
         struct.cneeTel = ""
         struct.NIC = ""

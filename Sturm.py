@@ -7,10 +7,20 @@
     5. To convert Excel files to PDF: https://stackoverflow.com/questions/52326782/python-converting-xlsx-to-pdf
     6. To have the new entries filtered before appending to GSheet.
 """
-
-import Misc
+import Converger
+import GParser
 import XLReader
 import PDFProcessor
+from Misc import *
+
+
+def main():
+    xl = XLReader.InvoiceReader()
+    pdf = PDFProcessor.PDFProcessor()
+    comm = GParser.HSParser()
+    ids = GParser.IDParser()
+    converger = Converger.Converger(xl, pdf, comm, ids)
+
 
 if __name__ == '__main__':
-    pass
+    main()

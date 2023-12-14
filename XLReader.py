@@ -1,10 +1,8 @@
-
-import os
 from tkinter.filedialog import askdirectory, askopenfilename
 import zipfile
 import openpyxl as xl
 
-from Misc import log, LogLevel
+from Misc import *
 
 
 # noinspection PyMethodMayBeStatic
@@ -18,7 +16,6 @@ class InvoiceReader:
         self.data = dict()  # the master data
         self.foldername = ""
         self.count_data = 0
-        self.count_desc = 0
 
         # automatically call getFoldername and retrieveData upon creation.
         self.getFoldername()
@@ -53,7 +50,6 @@ class InvoiceReader:
         # important to reset attributes / class members in case error occured.
         self.data.clear()
         self.count_data = 0
-        self.count_desc = 0
 
         with zipfile.ZipFile(self.foldername, 'r') as zip_ref:
             zip_ref.extractall(self.foldername[:-4])

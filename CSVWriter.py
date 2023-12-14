@@ -1,5 +1,5 @@
 import datetime as dt
-import os.path
+import os
 
 
 class CSVWriter:
