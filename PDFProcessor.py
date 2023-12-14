@@ -11,7 +11,7 @@ from Misc import *
 class PDFProcessor:
 
     def __init__(self):
-        self.pdfPages = dict()      # contains tuple of textual struct and binary content, tuple[StructDeclaration, io]
+        self.pdfPages = dict()      # contains dict[tuple[StructDeclaration, io]]
         self.currentPDF = None
         self.uuid = uuid.uuid4().hex
         self.getPdfFile()

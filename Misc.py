@@ -46,12 +46,12 @@ class StructDeclaration:
         self.DOB = None
         self.TAN = ""
         self.BRN = ""
-        self.customerType = ""      # company or individual
+        self.customerType = "INDIVIDUAL"      # company or individual
         self.frtAmt = 35.00
         self.frtCurr = "USD"
         self.othAmt = 0.00
         self.othCurr = "USD"
-        # Specific invoice details such as description, item value, item qty and HS code to be added on spot.
+        self.itemdetails = None    # Specific invoice details such as description, item value, item qty and HS code to be added on spot.
 
 
 if __name__ == '__main__':

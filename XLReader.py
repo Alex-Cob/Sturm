@@ -167,65 +167,6 @@ class InvoiceReader:
 
         return hat
 
-    def collectInputs(self) -> list[tuple[str, str | None]] | None:
-        """
-        Allows user to select a workbook already worked and retrieve the data inside.
-        :return: list of tuple containing item desc and HS code
-        """
-        filepath = askopenfilename(defaultextension=".xlsx", title="Select the file to collect data from:")
-        result = list()
-        if filepath == "":
-            log("No worksheet selected...", LogLevel.WARNING)
-            return
-        wb = xl.load_workbook(filepath)
-        sh = wb.worksheets[0]
-        x = 1
-
-        while sh.cell(row=x, column=1).value not in (None, ""):
-            hs = self.hasHS(sh.cell(row=x, column=2).value)
-            if hs is not None:
-                result.append((
-                    str(sh.cell(row=x, column=1).value),
-                    str(hs)
-                ))
-            else:
-                log("HS incorrect at line " + str(x), LogLevel.ERROR)
-                return
-            x += 1
-
-        wb.close()
-
-        log("Input collected")
-        return result
-
-    def hasHS(self, txt: str) -> str | None:
-        """
-        Uses a sort of customs tariff pattern to check if the txt inserted (a line from tariff pdf) has a hs code in it.
-        :param txt: the line to be parsed
-        :return: str | None
-        """
-        while txt.find("  ") > -1:
-            txt = txt.replace("  ", " ")
-        txt = txt.replace(". ", ".").replace(" .", ".")
-        pattern = "nnnn.nn.nn"
-        currPat = pattern
-        x = 0
-        for char in txt:
-            if len(currPat) == 0:
-                return txt[x - len(pattern):].strip()
-            if currPat[0] == 'n':
-                if 47 < ord(char) < 58:
-                    currPat = currPat[1:]
-                else:
-                    currPat = pattern
-            elif currPat[0] == '.':
-                if char == '.':
-                    currPat = currPat[1:]
-                else:
-                    currPat = pattern
-            x += 1
-        return None
-
 
 if __name__ == '__main__':
     pass
