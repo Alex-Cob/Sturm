@@ -44,8 +44,6 @@ class CSVWriter:
                 s += ',' + name  # Importer2Name
                 s += ',' + name  # ImporterName2
                 ad = str(structDecl.cneeAddr if structDecl.cneeAddr.find("Ã©") == -1 else structDecl.cneeAddr.replace("Ã©", "e"))
-                ad1 = ""
-                ad2 = ""
                 if len(ad) > 34:
                     ad = ad[:35]
                 s += ',' + str(ad)  # ImporterAddress1
