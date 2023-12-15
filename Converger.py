@@ -1,5 +1,6 @@
 import datetime as dt
 import os
+import win32com.client
 
 from Misc import *
 import XLReader
@@ -80,9 +81,39 @@ class Converger:
             self.workbench.append(currStruct)  # saving the struct to the 'workbench'
 
     def renameExcelFiles(self, originPath, destPath):
+        try:
+            excel = win32com.client.Dispatch("Excel.Application")
+            excel.Visible = False
+        except:
+            pass
         for path, dirs, files in os.walk(originPath):
             for wb in self.workbench:
                 for file in files:
-                    if file.find(wb.awb) > -1:
-                        os.rename(os.path.join(path, file),
-                                  os.path.join(destPath, wb.reportNo + "_" + wb.awb + "_INVOICE_upload-invoice.xlsx"))
+                    if file.find(wb.awb) > -1 and file.find("_SalesInvoice") == -1:
+                        destFile = os.path.join(destPath, wb.reportNo + "_" + file)
+                        os.rename(os.path.join(path, file), destFile)
+                        try:
+                            self.convertExcelToPDF(excel, destFile, destFile[:-5] + ".pdf")
+                        except:
+                            pass
+        try:
+            excel.close()
+        except:
+            pass
+
+    def convertExcelToPDF(self, ptrApp, WB_PATH, PATH_TO_PDF):
+        # Path to original excel file
+        try:
+            print('Start conversion to PDF')
+            # Open
+            wb = ptrApp.Workbooks.Open(WB_PATH)
+            # Specify the sheet you want to save by index. 1 is the first (leftmost) sheet.
+            wb.WorkSheets(1).Select()
+            # Save
+            wb.ActiveSheet.ExportAsFixedFormat(0, PATH_TO_PDF)
+        except Exception as e:
+            print('failed.')
+        else:
+            print('Succeeded.')
+        finally:
+            wb.Close()

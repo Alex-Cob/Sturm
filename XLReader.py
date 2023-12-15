@@ -3,6 +3,8 @@ from tkinter.filedialog import askdirectory, askopenfilename
 import zipfile
 import openpyxl as xl
 
+
+
 from Misc import *
 
 
@@ -65,14 +67,15 @@ class InvoiceReader:
 
                 # Below will create a new key from waybill and add a tuple of list[name, telNo] &
                 # and an empty list which will hold the items details.
-                self.data[str(sh.cell(row=7, column=2).value)] = [str(sh.cell(row=5, column=4).value),
-                                                                  str(sh.cell(row=6, column=4).value)], list()
+                awb = str(sh.cell(row=7, column=2).value)
+                self.data[awb] = [str(sh.cell(row=5, column=4).value),
+                                  str(sh.cell(row=6, column=4).value)], list()
 
                 x = 10      # first row where we get the shipment description.
 
                 # Will iterate from the first description line (row 10) till it finds an empty column.
                 while sh.cell(row=x, column=2).value not in (None, ""):
-                    self.data[str(sh.cell(row=7, column=2).value)][1].append(
+                    self.data[awb][1].append(
                         (
                             str(sh.cell(row=x, column=2).value),            # Description
                             eval(str(sh.cell(row=x, column=3).value)),      # Units
@@ -80,9 +83,9 @@ class InvoiceReader:
                             eval(str(sh.cell(row=x, column=5).value))       # Total Price.
                         )
                     )
-
                     x += 1      # next line
                     self.count_data += 1
+                wb.save(os.path.join(path, awb + "_INVOICE_upload-invoice.xlsx"))
                 wb.close()      # closing after finishing.
 
     def retrieveInvoiceData(self) -> None:
