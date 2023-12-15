@@ -181,7 +181,7 @@ class EndNarrator:
     def transposeDeductions(self, custUnfound, unpaired, newItems):
         self.sh.cell(row=1, column=1).value = "Customer Not Found"
         self.sh.cell(row=1, column=2).value = "Invoice/NOA mismatches"
-        self.sh.cell(row=1, column=1).value = "New Item Found"
+        self.sh.cell(row=1, column=3).value = "New Item Found"
         r = 2
         for elem in custUnfound:
             self.sh.cell(row=r, column=1).value = elem
