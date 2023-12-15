@@ -118,7 +118,7 @@ class Converger:
             print('Succeeded.')
         finally:
             wbk.Close()
-            ptrApp.Close()
+            ptrApp.Quit()
 
     def zipTogether(self, originFolder: str):
         compression = zipfile.ZIP_DEFLATED
