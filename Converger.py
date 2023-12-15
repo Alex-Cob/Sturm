@@ -84,43 +84,34 @@ class Converger:
             self.workbench.append(currStruct)  # saving the struct to the 'workbench'
 
     def renameExcelFiles(self, originPath, destPath):
-        try:
-            excel = win32com.client.Dispatch("Excel.Application")
-            excel.Visible = False
-        except Exception as e:
-            print(str(e), repr(e))
         for path, dirs, files in os.walk(originPath):
-            for wb in self.workbench:
+            for struct in self.workbench:
                 for file in files:
-                    if file.find(wb.awb) > -1 and file.find("_SalesInvoice") == -1:     # meaninf not the default ones
+                    if file.find(struct.awb) > -1 and file.find("_SalesInvoice") == -1:     # meaning not the default ones
                         originFile = os.path.join(path, file)
-                        destFile = os.path.join(path, wb.reportNo + "_" + file)
+                        destFile = os.path.join(destPath, struct.reportNo + "_" + file)
                         os.rename(originFile, destFile)
                         try:
-                            self.convertExcelToPDF(excel, originFile,
-                                                   os.path.join(path, wb.reportNo + "_" + file)[:-5] + ".pdf")
-                            print("From: ", destFile)
-                            print("To: ", destFile[:-5] + ".pdf")
+                            self.convertExcelToPDF(destFile, destFile[:-5] + ".pdf")
                         except Exception as e:
-                            print(str(e), repr(e))
-        try:
-            excel.close()
-        except:
-            pass
+                            print(repr(e), str(e))
 
     def convertExcelToPDF(self, ptrApp, WB_PATH, PATH_TO_PDF):
         # Path to original excel file
         try:
-            print('Start conversion to PDF')
+            excel = win32com.client.Dispatch("Excel.Application")
+            excel.Visible = False
+            log("Excel loaded...")
             # Open
-            wb = ptrApp.Workbooks.Open(WB_PATH)
+            wbk = ptrApp.Workbooks.Open(WB_PATH)
             # Specify the sheet you want to save by index. 1 is the first (leftmost) sheet.
-            wb.WorkSheets(1).Select()
+            sh = wbk.WorkSheets(1)
             # Save
-            wb.ActiveSheet.ExportAsFixedFormat(0, PATH_TO_PDF)
+            sh.ExportAsFixedFormat(0, PATH_TO_PDF)
         except Exception as e:
             print('failed.')
         else:
             print('Succeeded.')
         finally:
-            wb.Close()
+            wbk.Close()
+            excel.Close()
