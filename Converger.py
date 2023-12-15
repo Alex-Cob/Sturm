@@ -128,8 +128,8 @@ class Converger:
             with zipfile.ZipFile(os.path.join(os.environ["USERPROFILE"], "Downloads/attachments.zip"), mode="w") as zf:
                 for file in files:
                     if file.lower().find(".pdf"):
-                        zf.write(file,
-                                 arcname=os.path.join(os.environ["USERPROFILE"], "Downloads"),
+                        zf.write(os.path.join(os.environ["USERPROFILE"], "Downloads/" + file),
+                                 arcname=file,
                                  compress_type=compression)
                         count += 1
         print(count, "files were zipped")
