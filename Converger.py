@@ -94,10 +94,12 @@ class Converger:
                 for file in files:
                     if file.find(wb.awb) > -1 and file.find("_SalesInvoice") == -1:
                         originFile = os.path.join(path, file)
-                        destFile = os.path.join(destPath, wb.reportNo + "_" + file)
+                        destFile = os.path.join(destPath, wb.reportNo + "_" + file[:-5] + ".pdf")
                         os.rename(originFile, destFile)
                         try:
-                            self.convertExcelToPDF(excel, destFile, destFile[:-5] + ".pdf")
+                            self.convertExcelToPDF(excel, originFile, destFile)
+                            print("From: ", destFile)
+                            print("To: ", destFile[:-5] + ".pdf")
                         except:
                             pass
         try:
