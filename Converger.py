@@ -107,12 +107,15 @@ class Converger:
             # Specify the sheet you want to save by index. 1 is the first (leftmost) sheet.
             sh = wbk.WorkSheets(1)
             # Save
+            sh.PageSetup.Zoom = False
+            sh.PageSetup.FitToPagesTall = False
             sh.PageSetup.FitToPagesWide = 1
             sh.ExportAsFixedFormat(0, PATH_TO_PDF)
         except Exception as e:
-            print('failed.')
+            print('failed.', repr(e), str(e))
         else:
             print('Succeeded.')
         finally:
             wbk.Close()
+            os.remove(WB_PATH)
             ptrApp.Close()
