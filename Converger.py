@@ -96,11 +96,11 @@ class Converger:
                         except Exception as e:
                             print(repr(e), str(e))
 
-    def convertExcelToPDF(self, ptrApp, WB_PATH, PATH_TO_PDF):
+    def convertExcelToPDF(self, WB_PATH, PATH_TO_PDF):
         # Path to original excel file
         try:
-            excel = win32com.client.Dispatch("Excel.Application")
-            excel.Visible = False
+            ptrApp = win32com.client.Dispatch("Excel.Application")
+            ptrApp.Visible = False
             log("Excel loaded...")
             # Open
             wbk = ptrApp.Workbooks.Open(WB_PATH)
@@ -114,4 +114,4 @@ class Converger:
             print('Succeeded.')
         finally:
             wbk.Close()
-            excel.Close()
+            ptrApp.Close()
