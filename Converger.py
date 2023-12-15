@@ -87,21 +87,22 @@ class Converger:
         try:
             excel = win32com.client.Dispatch("Excel.Application")
             excel.Visible = False
-        except:
-            pass
+        except Exception as e:
+            print(str(e), repr(e))
         for path, dirs, files in os.walk(originPath):
             for wb in self.workbench:
                 for file in files:
-                    if file.find(wb.awb) > -1 and file.find("_SalesInvoice") == -1:
+                    if file.find(wb.awb) > -1 and file.find("_SalesInvoice") == -1:     # meaninf not the default ones
                         originFile = os.path.join(path, file)
-                        destFile = os.path.join(destPath, wb.reportNo + "_" + file[:-5] + ".pdf")
+                        destFile = os.path.join(path, wb.reportNo + "_" + file)
                         os.rename(originFile, destFile)
                         try:
-                            self.convertExcelToPDF(excel, originFile, destFile)
+                            self.convertExcelToPDF(excel, originFile,
+                                                   os.path.join(path, wb.reportNo + "_" + file)[:-5] + ".pdf")
                             print("From: ", destFile)
                             print("To: ", destFile[:-5] + ".pdf")
-                        except:
-                            pass
+                        except Exception as e:
+                            print(str(e), repr(e))
         try:
             excel.close()
         except:
