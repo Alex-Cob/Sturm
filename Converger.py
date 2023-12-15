@@ -1,5 +1,6 @@
 import datetime as dt
 import os
+import zipfile
 import win32com.client
 
 from Misc import *
@@ -117,5 +118,17 @@ class Converger:
             print('Succeeded.')
         finally:
             wbk.Close()
-            os.remove(WB_PATH)
             ptrApp.Close()
+
+    def zipTogether(self, originFolder: str):
+        compression = zipfile.ZIP_DEFLATED
+        count = 0
+        print("Zipping in progress...")
+        for path, dirs, files in os.walk(originFolder):
+            with zipfile.ZipFile(os.path.join(os.environ["USERPROFILE"], "Downloads/attachments.zip"), mode="w") as zf:
+                for file in files:
+                    zf.write(file,
+                             arcname=os.path.join(os.environ["USERPROFILE"], "Downloads"),
+                             compress_type=compression)
+                    count += 1
+        print(count, "files were zipped")

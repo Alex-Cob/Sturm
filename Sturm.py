@@ -32,6 +32,7 @@ def main():
         y += 1
     log("Now Renaming and converting excels")
     converger.renameExcelFiles(xl.foldername[:-4], os.path.join(os.environ["USERPROFILE"], "Downloads/" + pdf.uuid))
+    converger.zipTogether(os.path.join(os.environ["USERPROFILE"], "Downloads/" + pdf.uuid))
     log("Now filling in the narrator...")
     finalLog = XLReader.EndNarrator()
     finalLog.transposeDeductions(converger.CustNotDeduced, converger.unpaired, csv.NewHSItems)
