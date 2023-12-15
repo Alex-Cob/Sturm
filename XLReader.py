@@ -1,3 +1,4 @@
+import os
 from tkinter.filedialog import askdirectory, askopenfilename
 import zipfile
 import openpyxl as xl
@@ -166,6 +167,33 @@ class InvoiceReader:
         hat.extend(other)
 
         return hat
+
+
+class EndNarrator:
+
+    def __init__(self):
+        self.wb = xl.Workbook()
+        self.sh = self.wb.worksheets[0]
+
+    def __del__(self):
+        self.wb.save(os.path.join(os.environ["USERPROFILE"], "Desktop/session_log.xlsx"))
+
+    def transposeDeductions(self, custUnfound, unpaired, newItems):
+        self.sh.cell(row=1, column=1).value = "Customer Not Found"
+        self.sh.cell(row=1, column=2).value = "Invoice/NOA mismatches"
+        self.sh.cell(row=1, column=1).value = "New Item Found"
+        r = 2
+        for elem in custUnfound:
+            self.sh.cell(row=r, column=1).value = elem
+            r += 1
+        r = 2
+        for elem in unpaired:
+            self.sh.cell(row=r, column=2).value = elem
+            r += 1
+        r = 2
+        for elem in newItems:
+            self.sh.cell(row=r, column=3).value = elem
+            r += 1
 
 
 if __name__ == '__main__':

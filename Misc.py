@@ -4,8 +4,8 @@ __VERSION__ = "0.0.1"
 
 FOLDERCREDS = os.path.abspath(".")
 FILESERVACC = os.path.join(FOLDERCREDS, "chrono-sturm-creds.json")
-SPREADSHEET_CUSTOMERS = "ClientRecord"
-SHEET_CUSTOMER = "Record"
+SPREADSHEET_CUSTOMERS = "ID Database"
+SHEET_CUSTOMER = "ID Data"
 SPREADSHEET_HSCODES = "HSMapping"
 SHEET_HSCODES = "Items"
 
@@ -25,6 +25,17 @@ def log(msg: str, level=LogLevel.INFO) -> None:
     :return: None (could be Any)
     """
     print(msg)
+
+
+class IndexIDRecord:
+    name = 0
+    telephone = 1
+    email = 2
+    NIC = 3
+    passport = 4
+    DOB = 5
+    proxyName = 6
+    proxyID = 7
 
 
 class StructDeclaration:

@@ -72,7 +72,7 @@ class PDFProcessor:
         :return: None
         """
 
-        folderpath = os.path.join(os.environ["USERPROFILE"], "Downloads\\" + self.uuid)
+        folderpath = os.path.join(os.environ["USERPROFILE"], "Desktop\\" + self.uuid)
         if not os.path.exists(folderpath):
             os.makedirs(folderpath)
 

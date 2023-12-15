@@ -4,17 +4,6 @@ import gspread
 from Misc import *
 
 
-class IndexIDRecord:
-    name = 0
-    email = 1
-    telephone = 2
-    NIC = 3
-    passport = 4
-    DOB = 5
-    proxyName = 6
-    proxyID = 7
-
-
 class IDParser:
     CELLRANGE = "A2:H"
 

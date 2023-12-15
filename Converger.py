@@ -1,4 +1,6 @@
 import datetime as dt
+import os
+
 from Misc import *
 import XLReader
 import PDFProcessor
@@ -6,6 +8,7 @@ import GParser
 
 
 class Converger:
+    IDPLACEHOLDER = "A1111000000000"
 
     def __init__(self, xl_: XLReader.InvoiceReader, pdf_: PDFProcessor.PDFProcessor,
                  comm_: GParser.HSParser, ids_: GParser.IDParser):
@@ -14,7 +17,8 @@ class Converger:
         self.comm = comm_
         self.ids = ids_
         self.matchingWaybills = list()
-        self.unfound = list()
+        self.unpaired = list()              # Excels without an equivalent PDF.
+        self.CustNotDeduced = list()
         self.workbench = list()
         self._getMatchingXLandPDF()
         self.layingBricks()
@@ -28,11 +32,11 @@ class Converger:
             if x in self.pdf.pdfPages.keys():       # file matches
                 self.matchingWaybills.append(x)
             else:
-                self.unfound.append(x)              # file not founds
+                self.unpaired.append(x)              # file not founds
 
     def layingBricks(self):
         """
-        Takes the output from the different sources and
+        Takes the output from the different sources and converge on a single workbench (StructDeclaration)
         :return:
         """
         for matchingwb in self.matchingWaybills:
@@ -45,7 +49,7 @@ class Converger:
                 # if customer found, proceed...
                 pass
             elif len(candidates) == 0:
-                clist = [currStruct.cnee, currStruct.cneeEmail, currStruct.cneeTel, "A1111000000000",
+                clist = [currStruct.cnee, currStruct.cneeEmail, currStruct.cneeTel, Converger.IDPLACEHOLDER,
                          "", "", "", ""]
                 candidates = list()
                 candidates.append(clist.copy())     # appending to create a list of list
@@ -53,20 +57,32 @@ class Converger:
                 k = len(candidates)
                 identical = True
                 for j in range(k):
-                    if candidates[0][3].strip() != candidates[j][3].strip():    # checking if NIC match.
+                    if candidates[0][IndexIDRecord.NIC].strip() != candidates[j][3].strip():    # checking if NIC match.
                         identical = False
                         break
                 if not identical:
-                    candidates[0][3] = "A1111000000000"     # putting a placeholder to the NIC.
+                    candidates[0][IndexIDRecord.NIC] = Converger.IDPLACEHOLDER     # putting a placeholder to the NIC.
 
-            if candidates[0][3] not in ("", None):
-                currStruct.NIC = candidates[0][3]
+            if candidates[0][IndexIDRecord.NIC] not in ("", None):
+                currStruct.NIC = candidates[0][IndexIDRecord.NIC]
                 try:
-                    currStruct.DOB = str(dt.datetime.strptime(candidates[0][3][1:7], "%d%m%y").strftime("%d-%m-%Y"))
+                    currStruct.DOB = str(dt.datetime.strptime(candidates[0][IndexIDRecord.NIC][1:7], "%d%m%y").strftime("%d-%m-%Y"))
                 except Exception as e:
+                    currStruct.DOB = "01-01-2000"
                     log(f"{currStruct.awb}: couldn't strip DOB from NIC")
-            elif candidates[0][4] not in ("", None):
-                currStruct.passport = candidates[0][4]
-                currStruct.DOB = candidates[0][5]
+            elif candidates[0][IndexIDRecord.passport] not in ("", None):
+                currStruct.passport = candidates[0][IndexIDRecord.passport]
+                currStruct.DOB = candidates[0][IndexIDRecord.DOB]
+
+            if currStruct.NIC == Converger.IDPLACEHOLDER:
+                self.CustNotDeduced.append(currStruct.cnee)
 
             self.workbench.append(currStruct)  # saving the struct to the 'workbench'
+
+    def renameExcelFiles(self, originPath, destPath):
+        for path, dirs, files in os.walk(originPath):
+            for wb in self.workbench:
+                for file in files:
+                    if file.find(wb.awb) > -1:
+                        os.rename(os.path.join(path, file),
+                                  os.path.join(destPath, wb.reportNo + "_" + wb.awb + "_INVOICE_upload-invoice.xlsx"))

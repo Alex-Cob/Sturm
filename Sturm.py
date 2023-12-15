@@ -12,6 +12,7 @@ import Converger
 import GParser
 import XLReader
 import PDFProcessor
+import CSVWriter
 from Misc import *
 
 
@@ -21,6 +22,15 @@ def main():
     comm = GParser.HSParser()
     ids = GParser.IDParser()
     converger = Converger.Converger(xl, pdf, comm, ids)
+    csv = CSVWriter.CSVWriter(os.path.join(os.environ["USERPROFILE"], "Desktop"))
+    for elem in converger.workbench:
+        csv.enterRecord(elem, comm.knownCommodities)
+        pdf._transposePage((elem, pdf.pdfPages[elem.awb][1]))
+    converger.renameExcelFiles(xl.foldername[:-4], os.path.join(os.environ["USERPROFILE"], "Desktop/" + pdf.uuid))
+    finalLog = XLReader.EndNarrator()
+    finalLog.transposeDeductions(converger.CustNotDeduced, converger.unpaired, csv.NewHSItems)
+
+    # missing
 
 
 if __name__ == '__main__':
