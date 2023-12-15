@@ -73,6 +73,8 @@ class InvoiceReader:
 
                 x = 10      # first row where we get the shipment description.
 
+                ttval = 0.0
+
                 # Will iterate from the first description line (row 10) till it finds an empty column.
                 while sh.cell(row=x, column=2).value not in (None, ""):
                     self.data[awb][1].append(
@@ -83,8 +85,11 @@ class InvoiceReader:
                             eval(str(sh.cell(row=x, column=5).value))       # Total Price.
                         )
                     )
+                    ttval += eval(str(sh.cell(row=x, column=5).value))
                     x += 1      # next line
                     self.count_data += 1
+                sh.cell(row=x, column=4).value = "Total Amount (USD)"
+                sh.cell(row=x, column=5).value = ttval
                 wb.save(os.path.join(path, awb + "_INVOICE_upload-invoice.xlsx"))
                 wb.close()      # closing after finishing.
 

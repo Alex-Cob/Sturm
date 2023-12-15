@@ -96,8 +96,6 @@ class Converger:
                         originFile = os.path.join(path, file)
                         destFile = os.path.join(destPath, wb.reportNo + "_" + file)
                         os.rename(originFile, destFile)
-                        print(destFile)
-                        print(destFile[:-5] + ".pdf")
                         try:
                             self.convertExcelToPDF(excel, destFile, destFile[:-5] + ".pdf")
                         except:
