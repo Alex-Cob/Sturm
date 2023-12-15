@@ -14,7 +14,9 @@ class IDParser:
             self.service = gspread.service_account(self.file_creds)
         else:
             self.service = service
+        log("Fetch all stored customers...")
         self.customerData = self.downloadClientData()
+        log("All fetched...")
 
     def downloadClientData(self) -> list:
         """
@@ -110,7 +112,9 @@ class HSParser:
             self.service = gspread.service_account(self.file_creds)
         else:
             self.service = service
+        log("Filling memory with known commodities...")
         self.knownCommodities = self.retrieveKnownCommodities()      # list of tuples of commodity / HS code pairs.
+        log("Commodities memorized...")
 
     def retrieveKnownCommodities(self) -> list[tuple]:
         """

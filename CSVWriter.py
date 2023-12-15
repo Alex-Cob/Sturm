@@ -10,7 +10,10 @@ class CSVWriter:
     def __init__(self, path: str):
         self.header = "Courier Reference,AWB,REPORT,IMPORTER2NAME,IMPORTERNAME2,ImporterAddress1,ImporterAddress2,ImporterAddress3,IMPORTERADDRESSCOUNTRY,NATIONALITY,NIC,PASSPORT,EMAILADDRESS,MOBILE,TAN,BRN,IMPORTERTYPE,MOBILE,DOB,COUNTRYOFCONSIGNMENT,DECLAREDFREIGHTFCYAMOUNT,DECLAREDFREIGHTFCYCODE,OTHERCHARGESFCYAMOUNT,OTHERCHARGESFCYCODE,INSURANCEFCYAMOUNT,INSURANCEFCYCODE,HSCODE,GOODSDESCRIPTION,QTY,ORIGIN,SUP1,SUP2,RESERVEVALUE,DECLAREDVALUEFCYAMT,FCYCODE,PURPOSEOFIMPORTATION,USEITEMFLAG,MARKETABLEFLAG,PROXYNAME,PROXYNIC,PROXYADD1,PROXYADD2,PROXYADD3,PROXYADDRESSCOUNTRY\n"
         self.file_log = list()
-        self.fileGenerated = os.path.join(path, "worked.csv")
+        csvpath = os.path.join(path, "worked.csv")
+        if os.path.exists(csvpath):
+            os.remove(csvpath)
+        self.fileGenerated = csvpath
         self.NewHSItems = set()
 
     def enterRecord(self, structDecl: StructDeclaration, hsCodes: list[tuple]):

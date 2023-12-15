@@ -31,7 +31,9 @@ class PDFProcessor:
             log("No file has been selected...", LogLevel.WARNING)
             return
         self.currentPDF = PyPDF2.PdfReader(filepath)        # assigning the attribute to the file object
+        log("Retrieving PDF contents...")
         self._parseCurrentNoaPdf()
+        log("Data Retrieved...")
 
     def _parseCurrentNoaPdf(self) -> None:
         """

@@ -21,8 +21,11 @@ class Converger:
         self.unpaired = list()              # Excels without an equivalent PDF.
         self.CustNotDeduced = list()
         self.workbench = list()
+        log("Filtering mismatch first...")
         self._getMatchingXLandPDF()
+        log("Laying bricks on the workbench...")
         self.layingBricks()
+        log("Ready....")
 
     def _getMatchingXLandPDF(self) -> None:
         """
