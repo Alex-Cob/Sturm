@@ -48,12 +48,9 @@ class CSVWriter:
                 ad2 = ""
                 if len(ad) > 34:
                     ad = ad[:35]
-                    ad1 = ad[35:69]
-                    if len(ad) > 68:
-                        ad2 = ad[69:101]
                 s += ',' + str(ad)  # ImporterAddress1
-                s += ',' + str(ad1)  # ImporterAddress2
-                s += ',' + ad2  # ImporterAddress3
+                s += ',' + "Port Louis"  # ImporterAddress2
+                s += ',' + ""  # ImporterAddress3
                 s += ',' + "MU"  # ImporterAddressCountry
                 s += ',' + "MAURITIAN"  # Nationality (Mauritian or Foreigner)
                 s += ',' + structDecl.NIC.strip() if structDecl.NIC.strip() != "" else ""  # NIC (IDref or "")
