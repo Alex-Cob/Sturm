@@ -22,7 +22,7 @@ def main():
     comm = GParser.HSParser()
     ids = GParser.IDParser()
     converger = Converger.Converger(xl, pdf, comm, ids)
-    csv = CSVWriter.CSVWriter(os.path.join(os.environ["USERPROFILE"], "Desktop"))
+    csv = CSVWriter.CSVWriter(os.path.join(os.environ["USERPROFILE"], "Downloads"))
     log("Filling CSV and transposing PDFs...")
     y = 1
     for elem in converger.workbench:
@@ -31,7 +31,7 @@ def main():
         pdf._transposePage((elem, pdf.pdfPages[elem.awb][1]))
         y += 1
     log("Now Renaming and converting excels")
-    converger.renameExcelFiles(xl.foldername[:-4], os.path.join(os.environ["USERPROFILE"], "Desktop/" + pdf.uuid))
+    converger.renameExcelFiles(xl.foldername[:-4], os.path.join(os.environ["USERPROFILE"], "Downloads/" + pdf.uuid))
     log("Now filling in the narrator...")
     finalLog = XLReader.EndNarrator()
     finalLog.transposeDeductions(converger.CustNotDeduced, converger.unpaired, csv.NewHSItems)

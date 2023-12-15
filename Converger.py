@@ -93,8 +93,11 @@ class Converger:
             for wb in self.workbench:
                 for file in files:
                     if file.find(wb.awb) > -1 and file.find("_SalesInvoice") == -1:
+                        originFile = os.path.join(path, file)
                         destFile = os.path.join(destPath, wb.reportNo + "_" + file)
-                        os.rename(os.path.join(path, file), destFile)
+                        os.rename(originFile, destFile)
+                        print(destFile)
+                        print(destFile[:-5] + ".pdf")
                         try:
                             self.convertExcelToPDF(excel, destFile, destFile[:-5] + ".pdf")
                         except:

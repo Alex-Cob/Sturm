@@ -179,7 +179,7 @@ class EndNarrator:
         self.sh = self.wb.worksheets[0]
 
     def __del__(self):
-        self.wb.save(os.path.join(os.environ["USERPROFILE"], "Desktop/session_log.xlsx"))
+        self.wb.save(os.path.join(os.environ["USERPROFILE"], "Downloads/session_log.xlsx"))
 
     def transposeDeductions(self, custUnfound, unpaired, newItems):
         self.sh.cell(row=1, column=1).value = "Customer Not Found"
