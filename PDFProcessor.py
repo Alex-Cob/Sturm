@@ -46,7 +46,7 @@ class PDFProcessor:
 
         for pg in self.currentPDF.pages:    # iterate through pages and get content
             v = self.getPDFPageContent(pg)
-            if v != "":
+            if v.find("NOTICE OF ARRIVAL") > -1:
                 w = self._generateDeclarationStruct(v)
                 self.pdfPages[w.awb] = (w, pg)
 

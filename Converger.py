@@ -31,7 +31,10 @@ class Converger:
         log("Ready....")
 
     def __del__(self):
-        self.ptrApp.Quit()
+        try:
+            self.ptrApp.Quit()
+        except Exception as e:
+            log(repr(e))
 
     def _getMatchingXLandPDF(self) -> None:
         """
