@@ -140,7 +140,7 @@ class CSVWriter:
             if itnnm == hs[0].lower().strip():
                 return hs[1]
         self.NewHSItems.add(itmName)
-        return "01012100"       # Literally pure-breed horses
+        return "62041300"       # Literally pure-breed horses
 
 
 if __name__ == '__main__':
