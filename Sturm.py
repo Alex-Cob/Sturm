@@ -7,7 +7,7 @@
     5. To convert Excel files to PDF: https://stackoverflow.com/questions/52326782/python-converting-xlsx-to-pdf
     6. To have the new entries (HS Codes) filtered before appending to GSheet.
     7. In Converger, to cater for passport rather than NIC cards.
-    8. Check if attachment zipfile has equal invoices and noas
+    8. To fix bug where the excel quit closes the whole app + what is the worked and attachments are opened.
 """
 import Converger
 import GParser
@@ -35,8 +35,10 @@ def main():
     converger.renameExcelFiles(xl.foldername[:-4], os.path.join(os.environ["USERPROFILE"], "Downloads/" + pdf.uuid))
     try:
         converger.zipTogether(os.path.join(os.environ["USERPROFILE"], "Downloads/" + pdf.uuid))
-    except Exception as e:
-        print(str(e), repr(e))
+    except Exception:
+        print(
+
+        )
     log("Now filling in the narrator...")
     finalLog = XLReader.EndNarrator()
     finalLog.transposeDeductions(converger.CustNotDeduced, converger.unpaired, csv.NewHSItems)
