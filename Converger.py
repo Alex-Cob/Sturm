@@ -22,11 +22,16 @@ class Converger:
         self.unpaired = list()              # Excels without an equivalent PDF.
         self.CustNotDeduced = list()
         self.workbench = list()
+        self.ptrApp = win32com.client.Dispatch("Excel.Application")
+        self.ptrApp.Visible = False
         log("Filtering mismatch first...")
         self._getMatchingXLandPDF()
         log("Laying bricks on the workbench...")
         self.layingBricks()
         log("Ready....")
+
+    def __del__(self):
+        self.ptrApp.Quit()
 
     def _getMatchingXLandPDF(self) -> None:
         """
@@ -100,11 +105,9 @@ class Converger:
     def convertExcelToPDF(self, WB_PATH, PATH_TO_PDF):
         # Path to original excel file
         try:
-            ptrApp = win32com.client.Dispatch("Excel.Application")
-            ptrApp.Visible = False
             log("Excel loaded...")
             # Open
-            wbk = ptrApp.Workbooks.Open(WB_PATH)
+            wbk = self.ptrApp.Workbooks.Open(WB_PATH)
             # Specify the sheet you want to save by index. 1 is the first (leftmost) sheet.
             sh = wbk.WorkSheets(1)
             # Save
@@ -118,7 +121,6 @@ class Converger:
             print('Succeeded.')
         finally:
             wbk.Close()
-            ptrApp.Quit()
 
     def zipTogether(self, originFolder: str):
         compression = zipfile.ZIP_DEFLATED
