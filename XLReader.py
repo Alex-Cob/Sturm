@@ -88,8 +88,8 @@ class InvoiceReader:
                     ttval += eval(str(sh.cell(row=x, column=5).value))
                     x += 1      # next line
                     self.count_data += 1
-                sh.cell(row=x, column=4).value = "Total Amount (USD)"
-                sh.cell(row=x, column=5).value = ttval
+                # sh.cell(row=x, column=4).value = "Total Amount (USD)"
+                # sh.cell(row=x, column=5).value = ttval
                 wb.save(os.path.join(path, awb + "_INVOICE_upload-invoice.xlsx"))
                 wb.close()      # closing after finishing.
 
