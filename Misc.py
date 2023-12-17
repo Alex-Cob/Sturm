@@ -1,6 +1,6 @@
 import os
 
-__VERSION__ = "0.2.0"
+__VERSION__ = "0.3.0"
 
 FOLDERCREDS = os.path.abspath(".")
 FILESERVACC = os.path.join(FOLDERCREDS, "chrono-sturm-creds.json")
